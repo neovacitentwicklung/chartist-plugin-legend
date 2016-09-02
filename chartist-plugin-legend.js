@@ -25,7 +25,8 @@
         removeAll: false,
         legendNames: false,
         clickable: true,
-        onClick: null
+        onClick: null,
+        pseudoSkip: false
     };
 
     Chartist.plugins = Chartist.plugins || {};
@@ -88,14 +89,22 @@
             
             // Loop through all legends to set each name in a list item.
             legendNames.forEach(function (legend, i) {
+                var dataIndex = i;
+                if(options.pseudoSkip){
+                    dataIndex -= options.pseudoSkip;
+                }
                 var li = document.createElement('li');
                 li.className = 'ct-series-' + i;
                 // Append specific class to a legend element, if viable classes are given
                 if (classNamesViable) {
                    li.className += ' ' + options.classNames[i];
+                   if (options.classNames[i] === "ct-legend-hidden")
+                   {
+                      li.setAttribute('disabled', "true");
+                   }
                 }
-                li.setAttribute('data-legend', i);
-                li.textContent = legend.name || legend;
+                li.setAttribute('data-legend', dataIndex);
+                li.setAttribute('translate', legend.name || legend);
                 legendElement.appendChild(li);
             });
             chart.container.appendChild(legendElement);
